@@ -1,5 +1,5 @@
 {
-  "name": "Organit/gmail",
+  "name": "organit/gmail",
   "description": "Gmail API package for Laravel",
   "keywords": [
     "api",
