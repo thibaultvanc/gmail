@@ -58,35 +58,17 @@ trait Replyable
 	 *
 	 * @var string|array
 	 */
-	private $to;
+	private $to = [];
 
-	/**
-	 * Name of the recipient
-	 *
-	 * @var string
-	 */
-	private $nameTo;
 
 	/**
 	 * Single email or array of email for a carbon copy
 	 *
 	 * @var array|string
 	 */
-	private $cc;
+	private $cc = [];
 
-	/**
-	 * Name of the recipient
-	 *
-	 * @var string
-	 */
-	private $nameCc;
-
-	/**
-	 * Single email or array of email for a blind carbon copy
-	 *
-	 * @var array|string
-	 */
-	private $bcc;
+	private $bcc = [];
 
 	/**
 	 * Name of the recipient
@@ -109,27 +91,7 @@ trait Replyable
 		$this->swiftMessage = new Swift_Message();
 	}
 
-	/**
-	 * Receives the recipient's
-	 * If multiple recipients will receive the message an array should be used.
-	 * Example: array('receiver@domain.org', 'other@domain.org' => 'A name')
-	 *
-	 * If $name is passed and the first parameter is a string, this name will be
-	 * associated with the address.
-	 *
-	 * @param string|array $to
-	 *
-	 * @param string|null $name
-	 *
-	 * @return Replyable
-	 */
-	public function to( $to, $name = null )
-	{
-		$this->to = $to;
-		$this->nameTo = $name;
-
-		return $this;
-	}
+	
 
 	public function from( $from, $name = null )
 	{
@@ -139,35 +101,24 @@ trait Replyable
 		return $this;
 	}
 
-	/**
-	 * @param array|string $cc
-	 *
-	 * @param string|null $name
-	 *
-	 * @return Replyable
-	 */
-	public function cc( $cc, $name = null )
-	{
-		$this->cc = $this->emailList( $cc, $name );
-		$this->nameCc = $name;
 
-		return $this;
+	public function to($to, $name = null) //[$to, $name = null]
+    {
+        $this->to[] = [$to=>$name];
+        return $this;
+    }
+    public function cc($to, $name = null) //[$to, $name = null]
+    {
+        $this->cc[] = [$to=>$name];
+        return $this;
+    }
+    public function bcc($to, $name = null) //[$to, $name = null]
+    {
+        $this->bcc[] = [$to=>$name];
+        return $this;
 	}
+	
 
-	/**
-	 * @param array|string $bcc
-	 *
-	 * @param string|null $name
-	 *
-	 * @return Replyable
-	 */
-	public function bcc( $bcc, $name = null )
-	{
-		$this->bcc = $this->emailList( $bcc, $name );
-		$this->nameBcc = $name;
-
-		return $this;
-	}
 
 	/**
 	 * @param string $subject
@@ -313,9 +264,9 @@ trait Replyable
 		$this->swiftMessage
 			->setSubject( $this->subject )
 			->setFrom( $this->from, $this->nameFrom )
-			->setTo( $this->to, $this->nameTo )
-			->setCc( $this->cc, $this->nameCc )
-			->setBcc( $this->bcc, $this->nameBcc )
+			->setTo( $this->to )
+			->setCc( $this->cc )
+			->setBcc( $this->bcc )
 			->setBody( $this->message, 'text/html' )
 			->setPriority( $this->priority );
 
